@@ -1,0 +1,162 @@
+/* Reset básico para eliminar estilos por defecto */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;  /* Hace que el ancho total incluya padding y borde */
+}
+
+/* Eliminar estilos de listas */
+ul, ol {
+  list-style: none;
+}
+
+/* Eliminar subrayado de enlaces y heredar color */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hacer que las imágenes sean responsivas y eliminar borde inferior fantasma */
+img,
+picture,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Heredar tipografía de los elementos de formulario */
+/* input,
+button,
+textarea,
+select {
+  font: inherit;
+  border: none;
+  background: none;
+  outline: none;
+} */
+
+/* Botones con cursor pointer por defecto */
+/* button {
+  cursor: pointer;
+} */
+
+/* Eliminar el estilo de resumen en details */
+/* summary {
+  list-style: none;
+} */
+
+/* Asegurar que los elementos de bloque ocupen todo el ancho */
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  text-rendering: optimizeSpeed;
+}
+
+/* Quitar estilos de tablas (bordes, separación) */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Opcional: quitar el spinner de inputs numéricos */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+
+/* *************************************************************** */
+/* Estilos personalizados */
+/* *************************************************************** */
+
+/* Asegura que el body ocupe toda la altura y centre el contenido principal */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* centra horizontalmente */
+  justify-content: center; /* centra verticalmente (opcional, quítalo si no lo deseas) */
+  margin: 0;
+  padding: 20px;          /* margen general para que no pegue a los bordes */
+}
+
+/* El contenedor principal (section.crud) será flex en columna */
+.crud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* centra cada artículo horizontalmente */
+  gap: 2rem;              /* espacio entre el formulario y la tabla (equivale a margin-bottom) */
+  width: 100%;
+  max-width: 800px;       /* anchura máxima para que no se estiren demasiado en pantallas grandes */
+}
+
+/* Cada artículo (formulario y tabla) tendrá un ancho automático y fondo blanco opcional */
+.crud article {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* solo para darle un poco de elegancia (opcional) */
+}
+
+/* La tabla se hará responsiva con scroll horizontal en pantallas pequeñas */
+.crud-table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+/* Ajuste del título .web-title (h1) para que también se centre */
+.web-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Centrar los títulos h2 de cada sección */
+.crud-title {
+  text-align: center;
+}
+
+/* Hacer que los campos del formulario (incluyendo el botón) ocupen el 90% del contenedor */
+.crud-form input:not([type="hidden"]) {
+  width: 90%;
+  display: block;
+  margin: 0 auto 0.75rem auto; /* auto centra horizontalmente, margen inferior separa los campos */
+  padding: 0.5rem; /* opcional, mejora la apariencia */
+  border: 1px solid #ccc; /* opcional, para visualizar los campos */
+  border-radius: 4px; /* opcional */
+}
+
+/* El botón de envío con un ancho del 90% y algo de margen superior */
+.crud-form input[type="submit"] {
+  width: 90%;
+  display: block;
+  margin: 1rem auto 0 auto;
+  background-color: #0d6efd; /* color primario de Bootstrap, opcional */
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+/* Tabla: ocupará el 90% del ancho de su contenedor y estará centrada */
+.crud-table {
+  width: 90%;
+  margin: 0 auto;
+  border-collapse: collapse; /* consistencia con el reset */
+}
+
+/* Opcional: para pantallas muy pequeñas, permitir desplazamiento horizontal de la tabla */
+@media (max-width: 768px) {
+  .crud-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
