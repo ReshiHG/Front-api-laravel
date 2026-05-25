@@ -2,13 +2,15 @@
 
 const d = document,
   $table = d.querySelector(".crud-table"),
+  $tbody = $table.querySelector("tbody"),
   $form = d.querySelector(".crud-form"),
   $title = d.querySelector(".crud-title"),
   $template = d.getElementById("crud-template").content,
   $fragment = d.createDocumentFragment();
 
 //
-const getAll = async () => {
+async function getAll() {
+  
   // Manejo de errores
   try {
     // Solicitud al api
@@ -17,6 +19,9 @@ const getAll = async () => {
 
     // Manejo de error en la respuesta
     if (!res.ok) throw { status: res.status, statusText: res.statusText };
+
+    // limpiamos la tabla 
+    $tbody.innerHTML = "";
 
     // console.log(json.data);
     // Obtención de los datos y llenado del template
@@ -35,7 +40,7 @@ const getAll = async () => {
       $fragment.appendChild($clone);
     });
 
-    $table.querySelector("tbody").appendChild($fragment);
+    $tbody.appendChild($fragment);
   } catch (error) {
     let message = error.statusText || "Error al obtener los productos";
     $table.insertAdjacentHTML(
@@ -53,47 +58,94 @@ d.addEventListener("submit", async (e) => {
   if (e.target === $form) {
     // Prevenimos las acciones por defecto
     e.preventDefault();
-
-    if (!e.target.id.value) {
+    const id = e.target.id.value;
+    
+    if (!id) {
       // Agregamos producto
       try {
-        // creamos las opciones que vamos a enviar con fetch
-        let options = {
+        // Enviamos la petición a la API indicando la URL y los encabezados
+        let res = await fetch("http://laravel_api_rest.test/api/product", {
             method: "POST",
             headers: {
-              "Content-type": "application/json; charset=utf-8",
-              "accept": "application/json",
+              "Content-type": "application/json",
+              Accept: "application/json",
             },
             body: JSON.stringify({
               name: e.target.name.value,
               price: e.target.price.value,
               stock: e.target.stock.value,
             }),
-          },
-          // Enviamos la petición a la API y guardamos la respuesta
-          res = await fetch(
-            "http://laravel_api_rest.test/api/product",
-            options,
-          ),
-
+          }),
           json = await res.json();
         // Manejo de error en la respuesta
         if (!res.ok) throw { status: res.status, statusText: res.statusText };
 
-        // refrescamos la página
+        // limpiamos
         e.target.reset();
-        location.reload();
+        e.target.id.value = "";
+        $title.textContent = "Agregar Producto";
 
+        // Refrescar la tabla
+        await getAll();
+        
       } catch (error) {
-        let message = error.statusText || "Error al obtener los productos";
-        $table.insertAdjacentElement(
+        let message = error.statusText || "Error al insertar el producto";
+        $table.insertAdjacentHTML(
           "afterend",
           `<p>Error ${error.status}: ${message}</p>`,
         );
-
       }
     } else {
       // Actualizamos producto
+      try {
+        console.log("entra al fetch");
+        
+        let res = await fetch(
+            `http://laravel_api_rest.test/api/product/${id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                name: e.target.name.value,
+                price: e.target.price.value,
+                stock: e.target.stock.value,
+              })
+            },
+          ),
+          json = await res.json();
+
+        // Manejo de error en la respuesta
+        if (!res.ok) throw { status: res.status, statusText: res.statusText };
+
+        // limpiamos
+        e.target.reset();
+        e.target.id.value = "";
+        $title.textContent = "Agregar Producto";
+
+        // Refrescar la tabla
+        await getAll();
+
+      } catch (error) {
+        let message = error.statusText || "Error al actualizar el producto";
+        $table.insertAdjacentHTML(
+          "afterend",
+          `<p>Error ${error.status}: ${message}</p>`,
+        );
+      }
     }
+  }
+});
+
+// Agregamos un listener para los botones
+d.addEventListener("click", (e) => {
+  if (e.target.matches(".productButtonEdit")) {
+    $title.textContent = "Editar Producto";
+    $form.name.value = e.target.dataset.name;
+    $form.price.value = e.target.dataset.price;
+    $form.stock.value = e.target.dataset.stock;
+    $form.id.value = e.target.dataset.id;
   }
 });
