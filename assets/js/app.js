@@ -8,7 +8,10 @@ const d = document,
   $template = d.getElementById("crud-template").content,
   $fragment = d.createDocumentFragment();
 
-//
+
+//**************************************/
+// READ
+//**************************************/
 async function getAll() {
   
   // Manejo de errores
@@ -61,7 +64,9 @@ d.addEventListener("submit", async (e) => {
     const id = e.target.id.value;
     
     if (!id) {
-      // Agregamos producto
+//**************************************/
+// CREATE
+//**************************************/
       try {
         // Enviamos la petición a la API indicando la URL y los encabezados
         let res = await fetch("http://laravel_api_rest.test/api/product", {
@@ -87,7 +92,7 @@ d.addEventListener("submit", async (e) => {
 
         // Refrescar la tabla
         await getAll();
-        
+
       } catch (error) {
         let message = error.statusText || "Error al insertar el producto";
         $table.insertAdjacentHTML(
@@ -96,7 +101,9 @@ d.addEventListener("submit", async (e) => {
         );
       }
     } else {
-      // Actualizamos producto
+//**************************************/
+// UPDATE
+//**************************************/
       try {
         console.log("entra al fetch");
         
@@ -140,12 +147,43 @@ d.addEventListener("submit", async (e) => {
 });
 
 // Agregamos un listener para los botones
-d.addEventListener("click", (e) => {
+d.addEventListener("click", async (e) => {
   if (e.target.matches(".productButtonEdit")) {
     $title.textContent = "Editar Producto";
     $form.name.value = e.target.dataset.name;
     $form.price.value = e.target.dataset.price;
     $form.stock.value = e.target.dataset.stock;
     $form.id.value = e.target.dataset.id;
+  }
+
+//**************************************/
+// DELETE
+//**************************************/
+  if (e.target.matches(".productButtonDelete")) {
+    // Confirmamos la eliminación    
+    let isDelete = confirm(`¿Estás seguro de eliminar el id ${e.target.dataset.id}?`);
+
+    if (isDelete) {
+      try {
+        // Enviamos la petición DELETE pero sin el body ya que no es necesario
+        let res = await fetch(`http://laravel_api_rest.test/api/product/${e.target.dataset.id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-type": "application/json",
+              Accept: "application/json",
+            },
+          }),
+          json = await res.json();
+        // Manejo de error en la respuesta
+        if (!res.ok) throw { status: res.status, statusText: res.statusText };
+
+        // Refrescar la tabla
+        await getAll();
+
+      } catch (error) {
+        let message = error.statusText || "Error al insertar el producto";
+        alert(`Error ${error.status}: ${message}`);
+      }
+    }
   }
 });
